@@ -39,12 +39,12 @@ impl TicketStore {
     }
 
     pub fn get(&self, id: &TicketId) -> Option<&Ticket> {
-                                                      self.data.get(id)
-                                                                       }
+        self.data.get(id)
+    }
 
     pub fn list(&self) -> Vec<&Ticket> {
-                                     self.data.values().collect()
-                                                                 }
+        self.data.values().collect()
+    }
 
     /// We take in an `id` and a `patch` struct: this allows us to constrain which of the
     /// fields in a `Ticket` can actually be updated.
@@ -58,15 +58,39 @@ impl TicketStore {
     /// If the `id` passed in matches a ticket in the store, we return the edited ticket.
     /// If it doesn't, we return `None`.
     pub fn update(&mut self, id: &TicketId, patch: TicketPatch) -> Option<&Ticket> {
-                                                                                 todo!()
-                                                                                        }
+        if let Some(ticket) = self.data.get_mut(id) {
+            if let Some(title) = patch.title {
+                ticket.title = title;
+            }
+            if let Some(description) = patch.description {
+                ticket.description = description;
+            }
+            if let Some(status) = patch.status {
+                ticket.status = status;
+            }
+
+            ticket.updated_at = Utc::now();
+
+            return Some(ticket);
+        }
+
+        None
+    }
 
     /// If the `id` passed in matches a ticket in the store, we return the deleted ticket
     /// with some additional metadata.
     /// If it doesn't, we return `None`.
     pub fn delete(&mut self, id: &TicketId) -> Option<DeletedTicket> {
-                                                                   todo!()
-                                                                          }
+        if let Some(ticket) = self.data.remove(id) {
+            let deleted_ticket = DeletedTicket {
+                ticket,
+                deleted_at: Utc::now(),
+            };
+            return Some(deleted_ticket);
+        }
+
+        None
+    }
 
     fn generate_id(&mut self) -> TicketId {
         self.current_id += 1;
@@ -150,11 +174,11 @@ pub struct DeletedTicket {
 
 impl DeletedTicket {
     pub fn ticket(&self) -> &Ticket {
-                                  &self.ticket
-                                              }
+        &self.ticket
+    }
     pub fn deleted_at(&self) -> &DateTime<Utc> {
-                                             &self.deleted_at
-                                                             }
+        &self.deleted_at
+    }
 }
 
 #[derive(PartialEq, Debug, Clone)]
@@ -164,8 +188,8 @@ impl Error for ValidationError {}
 
 impl std::fmt::Display for ValidationError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                                                                 write!(f, "{}", self.0)
-                                                                                        }
+        write!(f, "{}", self.0)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -180,23 +204,23 @@ pub struct Ticket {
 
 impl Ticket {
     pub fn title(&self) -> &TicketTitle {
-                                      &self.title
-                                                 }
+        &self.title
+    }
     pub fn description(&self) -> &TicketDescription {
-                                                  &self.description
-                                                                   }
+        &self.description
+    }
     pub fn status(&self) -> &Status {
-                                  &self.status
-                                              }
+        &self.status
+    }
     pub fn created_at(&self) -> &DateTime<Utc> {
-                                             &self.created_at
-                                                             }
+        &self.created_at
+    }
     pub fn id(&self) -> &TicketId {
-                                &self.id
-                                        }
+        &self.id
+    }
     pub fn updated_at(&self) -> &DateTime<Utc> {
-                                             &self.updated_at
-                                                             }
+        &self.updated_at
+    }
 }
 
 #[cfg(test)]
@@ -303,8 +327,8 @@ mod tests {
 
     #[test]
     fn title_cannot_be_empty() {
-                             assert!(TicketTitle::new("".into()).is_err())
-                                                                          }
+        assert!(TicketTitle::new("".into()).is_err())
+    }
 
     #[test]
     fn title_cannot_be_longer_than_fifty_chars() {
