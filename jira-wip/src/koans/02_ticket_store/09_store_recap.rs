@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::error::Error;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct TicketStore {
     data: HashMap<TicketId, Ticket>,
     current_id: TicketId,
@@ -41,12 +41,12 @@ impl TicketStore {
     }
 
     pub fn get(&self, id: &TicketId) -> Option<&Ticket> {
-                                                      self.data.get(id)
-                                                                       }
+        self.data.get(id)
+    }
 
     pub fn list(&self) -> Vec<&Ticket> {
-                                     self.data.values().collect()
-                                                                 }
+        self.data.values().collect()
+    }
 
     pub fn update(&mut self, id: &TicketId, patch: TicketPatch) -> Option<&Ticket> {
         if let Some(ticket) = self.data.get_mut(id) {
@@ -81,8 +81,8 @@ impl TicketStore {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct TicketTitle(String);
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+pub struct TicketTitle(pub String);
 
 impl TicketTitle {
     pub fn new(title: String) -> Result<Self, ValidationError> {
@@ -98,8 +98,8 @@ impl TicketTitle {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct TicketDescription(String);
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+pub struct TicketDescription(pub String);
 
 impl TicketDescription {
     pub fn new(description: String) -> Result<Self, ValidationError> {
@@ -134,11 +134,11 @@ pub struct DeletedTicket {
 
 impl DeletedTicket {
     pub fn ticket(&self) -> &Ticket {
-                                  &self.ticket
-                                              }
+        &self.ticket
+    }
     pub fn deleted_at(&self) -> &DateTime<Utc> {
-                                             &self.deleted_at
-                                                             }
+        &self.deleted_at
+    }
 }
 
 #[derive(PartialEq, Debug, Clone)]
@@ -148,11 +148,11 @@ impl Error for ValidationError {}
 
 impl std::fmt::Display for ValidationError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                                                                 write!(f, "{}", self.0)
-                                                                                        }
+        write!(f, "{}", self.0)
+    }
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Deserialize, Serialize)]
 pub enum Status {
     ToDo,
     InProgress,
@@ -160,7 +160,7 @@ pub enum Status {
     Done,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct Ticket {
     id: TicketId,
     title: TicketTitle,
@@ -172,30 +172,30 @@ pub struct Ticket {
 
 impl Ticket {
     pub fn title(&self) -> &TicketTitle {
-                                      &self.title
-                                                 }
+        &self.title
+    }
     pub fn description(&self) -> &TicketDescription {
-                                                  &self.description
-                                                                   }
+        &self.description
+    }
     pub fn status(&self) -> &Status {
-                                  &self.status
-                                              }
+        &self.status
+    }
     pub fn created_at(&self) -> &DateTime<Utc> {
-                                             &self.created_at
-                                                             }
+        &self.created_at
+    }
     pub fn id(&self) -> &TicketId {
-                                &self.id
-                                        }
+        &self.id
+    }
     pub fn updated_at(&self) -> &DateTime<Utc> {
-                                             &self.updated_at
-                                                             }
+        &self.updated_at
+    }
 }
 
 #[cfg(test)]
 mod tests {
     #[test]
     fn the_next_step_of_your_journey() {
-        let i_am_ready_to_continue = __;
+        let i_am_ready_to_continue = true;
 
         assert!(i_am_ready_to_continue);
     }

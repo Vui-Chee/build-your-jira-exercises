@@ -50,9 +50,7 @@ pub fn save(ticket_store: &TicketStore, path: &Path) {
 
 #[cfg(test)]
 mod tests {
-    use super::super::store_recap::{
-        Status, TicketDescription, TicketDraft, TicketStore, TicketTitle,
-    };
+    use super::super::store_recap::{TicketDescription, TicketDraft, TicketStore, TicketTitle};
     use super::*;
     use fake::Fake;
     use tempfile::NamedTempFile;

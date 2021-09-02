@@ -51,5 +51,13 @@ mod vec;
 mod delete_and_update;
 
 #[path = "koans/02_ticket_store/09_store_recap.rs"]
-mod store_recap;
+pub mod store_recap;
 
+#[path = "koans/03_cli/00_cli.rs"]
+pub mod cli;
+
+#[path = "koans/03_cli/01_persistence.rs"]
+pub mod persistence;
+
+#[path = "koans/03_cli/02_the_end.rs"]
+mod the_end;
